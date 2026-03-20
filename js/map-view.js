@@ -173,6 +173,8 @@ const MapView = (() => {
             resultsList.classList.add('visible');
         } catch (err) {
             console.warn('Search error:', err);
+            resultsList.innerHTML = '<li style="color: var(--text-secondary);">Search unavailable — check your connection</li>';
+            resultsList.classList.add('visible');
         }
     }
 

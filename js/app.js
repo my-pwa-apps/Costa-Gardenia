@@ -50,7 +50,11 @@
         updateMonthDisplay();
 
         // Initialize modules
-        MapView.init(handleLocationChange);
+        try {
+            MapView.init(handleLocationChange);
+        } catch (err) {
+            console.error('Failed to initialize map:', err);
+        }
 
         // Navigation
         navBtns.forEach(btn => {
@@ -121,8 +125,12 @@
      */
     function initSunPathView() {
         const canvas = document.getElementById('sunpath-canvas');
-        SunPathScene.init(canvas);
-        SunPathScene.addSampleBuildings();
+        try {
+            SunPathScene.init(canvas);
+            SunPathScene.addSampleBuildings();
+        } catch (err) {
+            console.error('Failed to initialize 3D scene:', err);
+        }
         updateScene();
     }
 
@@ -148,12 +156,15 @@
      */
     function handleDateChange() {
         const parts = datePicker.value.split('-');
-        if (parts.length === 3) {
-            state.date = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-            monthSlider.value = state.date.getMonth();
-            updateMonthDisplay();
-            updateScene();
-        }
+        if (parts.length !== 3) return;
+        const y = parseInt(parts[0]), m = parseInt(parts[1]) - 1, d = parseInt(parts[2]);
+        if (isNaN(y) || isNaN(m) || isNaN(d)) return;
+        const candidate = new Date(y, m, d);
+        if (isNaN(candidate.getTime())) return;
+        state.date = candidate;
+        monthSlider.value = state.date.getMonth();
+        updateMonthDisplay();
+        updateScene();
     }
 
     /**

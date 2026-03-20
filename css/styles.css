@@ -167,6 +167,7 @@ html, body {
     width: min(500px, calc(100% - 32px));
     padding: 10px 16px;
     background: var(--bg-glass);
+    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -201,6 +202,7 @@ html, body {
     margin-top: 4px;
     list-style: none;
     background: var(--bg-glass);
+    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -235,6 +237,7 @@ html, body {
     left: 16px;
     padding: 6px 12px;
     background: var(--bg-glass);
+    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -260,6 +263,7 @@ html, body {
 
 #sun-info-panel {
     background: var(--bg-glass);
+    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -332,6 +336,7 @@ html, body {
     gap: 6px;
     padding: 8px 14px;
     background: var(--bg-glass);
+    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -357,6 +362,7 @@ html, body {
     gap: 12px;
     padding: 16px 24px;
     background: var(--bg-glass);
+    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -379,6 +385,7 @@ html, body {
 
 .ar-hud-btn {
     background: var(--bg-glass) !important;
+    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     border: 1px solid var(--border) !important;
     color: var(--text-primary) !important;
@@ -454,6 +461,7 @@ html, body {
     color: var(--text-secondary);
     white-space: nowrap;
     cursor: pointer;
+    -webkit-user-select: none;
     user-select: none;
 }
 
@@ -525,6 +533,7 @@ input[type="checkbox"] {
     align-items: center;
     justify-content: center;
     background: rgba(0, 0, 0, 0.6);
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     z-index: 9999;
     transition: opacity 0.3s ease;
@@ -664,5 +673,106 @@ input[type="checkbox"] {
     #sun-info-panel {
         min-width: 140px;
         padding: 10px;
+    }
+
+    #ar-instructions {
+        max-width: 90%;
+        padding: 12px 16px;
+    }
+
+    #ar-hud {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    #ar-compass, #ar-sun-info {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    #app-header {
+        padding: 0 8px;
+        height: 48px;
+    }
+
+    #app-header h1 {
+        font-size: 13px;
+    }
+
+    .header-nav {
+        gap: 2px;
+        padding: 2px;
+    }
+
+    .nav-btn {
+        padding: 6px 8px;
+    }
+
+    .nav-btn .material-icons-round {
+        font-size: 16px;
+    }
+
+    #app-main {
+        height: calc(100vh - 48px - 96px);
+    }
+
+    #controls-panel {
+        padding: 6px 8px;
+    }
+
+    .control-group label {
+        font-size: 11px;
+    }
+
+    #time-slider {
+        min-width: 80px;
+    }
+
+    #month-slider {
+        min-width: 80px;
+    }
+
+    #map-search {
+        width: calc(100% - 16px);
+        padding: 8px 12px;
+    }
+
+    #sunpath-overlay {
+        top: 8px;
+        right: 8px;
+    }
+
+    #sun-info-panel {
+        min-width: 120px;
+        padding: 8px;
+    }
+
+    .info-row .label {
+        font-size: 11px;
+    }
+
+    .info-row .value {
+        font-size: 11px;
+    }
+}
+
+/* Landscape phone orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+    #app-header {
+        height: 40px;
+    }
+
+    #app-main {
+        height: calc(100vh - 40px - 52px);
+    }
+
+    #controls-panel {
+        padding: 4px 12px;
+    }
+
+    .controls-row + .controls-row {
+        margin-top: 2px;
     }
 }

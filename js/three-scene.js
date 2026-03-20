@@ -9,6 +9,7 @@ const SunPathScene = (() => {
     let groundMesh, compassGroup;
     let buildingMeshes = [];
     let animFrameId = null;
+    let resizeObserver = null;
     let isInitialized = false;
 
     const GROUND_SIZE = 40;
@@ -84,8 +85,8 @@ const SunPathScene = (() => {
         setupControls(canvas);
 
         // Handle resize
-        const ro = new ResizeObserver(() => handleResize(canvas));
-        ro.observe(canvas);
+        resizeObserver = new ResizeObserver(() => handleResize(canvas));
+        resizeObserver.observe(canvas);
 
         isInitialized = true;
         animate();
@@ -426,6 +427,10 @@ const SunPathScene = (() => {
 
     function dispose() {
         if (animFrameId) cancelAnimationFrame(animFrameId);
+        if (resizeObserver) { resizeObserver.disconnect(); resizeObserver = null; }
+        clearPaths();
+        clearBuildings();
+        if (renderer) { renderer.dispose(); renderer = null; }
         isInitialized = false;
     }
 
