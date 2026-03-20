@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Costa Gardenia — Sun Path Tracker</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header id="app-header">
+        <div class="header-left">
+            <span class="logo-icon material-icons-round">wb_sunny</span>
+            <h1>Costa Gardenia</h1>
+        </div>
+        <nav class="header-nav">
+            <button class="nav-btn active" data-view="map">
+                <span class="material-icons-round">map</span>
+                <span>Map</span>
+            </button>
+            <button class="nav-btn" data-view="sunpath">
+                <span class="material-icons-round">timeline</span>
+                <span>Sun Path</span>
+            </button>
+            <button class="nav-btn" data-view="ar">
+                <span class="material-icons-round">view_in_ar</span>
+                <span>AR View</span>
+            </button>
+        </nav>
+        <div class="header-right">
+            <button id="btn-info" class="icon-btn" title="About">
+                <span class="material-icons-round">info</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="app-main">
+        <!-- Map View -->
+        <section id="view-map" class="view active">
+            <div id="map-container">
+                <div id="leaflet-map"></div>
+                <div id="map-search">
+                    <span class="material-icons-round">search</span>
+                    <input type="text" id="location-search" placeholder="Search address or place…" autocomplete="off">
+                    <ul id="search-results"></ul>
+                </div>
+                <div id="map-coords">
+                    <span id="display-lat">—</span>, <span id="display-lng">—</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sun Path 3D View -->
+        <section id="view-sunpath" class="view">
+            <canvas id="sunpath-canvas"></canvas>
+            <div id="sunpath-overlay">
+                <div id="sun-info-panel">
+                    <div class="info-row">
+                        <span class="label">Altitude</span>
+                        <span id="sun-altitude" class="value">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Azimuth</span>
+                        <span id="sun-azimuth" class="value">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Sunrise</span>
+                        <span id="sun-rise" class="value">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Sunset</span>
+                        <span id="sun-set" class="value">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Day Length</span>
+                        <span id="sun-daylength" class="value">—</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AR View (mobile phone camera overlay) -->
+        <section id="view-ar" class="view">
+            <div id="ar-container">
+                <video id="ar-video" autoplay playsinline muted></video>
+                <canvas id="ar-canvas"></canvas>
+                <div id="ar-hud">
+                    <div id="ar-compass">
+                        <span class="material-icons-round">explore</span>
+                        <span id="ar-heading">—°</span>
+                    </div>
+                    <div id="ar-sun-info">
+                        <span class="material-icons-round">wb_sunny</span>
+                        <span id="ar-sun-pos">—</span>
+                    </div>
+                    <button id="ar-undo-obstruction" class="icon-btn ar-hud-btn" title="Undo last obstruction">
+                        <span class="material-icons-round">undo</span>
+                    </button>
+                </div>
+                <div id="ar-instructions">
+                    <span class="material-icons-round">smartphone</span>
+                    <p>Point your phone's camera at the sky. The sun's path for the selected date will be overlaid on the live view. Tap on buildings to mark obstructions that block sunlight.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Controls Panel -->
+    <aside id="controls-panel">
+        <div class="controls-row">
+            <div class="control-group">
+                <label for="date-picker">
+                    <span class="material-icons-round">calendar_today</span>
+                    Date
+                </label>
+                <input type="date" id="date-picker">
+            </div>
+            <div class="control-group">
+                <label for="time-slider">
+                    <span class="material-icons-round">schedule</span>
+                    <span id="time-display">12:00</span>
+                </label>
+                <input type="range" id="time-slider" min="0" max="1440" value="720" step="1">
+            </div>
+            <div class="control-group">
+                <button id="btn-animate" class="icon-btn" title="Animate day">
+                    <span class="material-icons-round">play_arrow</span>
+                </button>
+                <button id="btn-now" class="icon-btn" title="Jump to now">
+                    <span class="material-icons-round">my_location</span>
+                </button>
+            </div>
+        </div>
+        <div class="controls-row">
+            <div class="control-group wide">
+                <label for="month-slider">
+                    <span class="material-icons-round">date_range</span>
+                    <span id="month-display">June</span>
+                </label>
+                <input type="range" id="month-slider" min="0" max="11" value="5" step="1">
+            </div>
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" id="show-shadows" checked>
+                    <span class="material-icons-round">blur_on</span>
+                    Shadows
+                </label>
+            </div>
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" id="show-all-paths">
+                    <span class="material-icons-round">auto_graph</span>
+                    All Months
+                </label>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Info Modal -->
+    <div id="info-modal" class="modal hidden">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">
+                <span class="material-icons-round">close</span>
+            </button>
+            <h2><span class="material-icons-round">wb_sunny</span> Costa Gardenia</h2>
+            <p>Visualize the sun's path at any location to evaluate natural light for your future home. Use the <strong>Map</strong> to set a location, <strong>Sun Path</strong> for a 3D visualization, and <strong>AR View</strong> to see the sun's trajectory overlaid on your camera view — including how nearby buildings may cast shadows.</p>
+            <h3>How to Use</h3>
+            <ol>
+                <li>Search or click on the map to set your location.</li>
+                <li>Switch to <em>Sun Path</em> to see the 3D arc for any date/time.</li>
+                <li>Adjust the date and time sliders to explore different seasons.</li>
+                <li>Open <em>AR View</em> on-site to overlay the sun path on your camera.</li>
+                <li>Tap buildings in AR to mark obstructions and see shadow impact.</li>
+            </ol>
+            <p class="footnote">Sun calculations are astronomically accurate within ~1°. Building obstruction analysis is approximate.</p>
+        </div>
+    </div>
+
+    <!-- Libraries -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- App Modules -->
+    <script src="js/sun-calculator.js"></script>
+    <script src="js/three-scene.js"></script>
+    <script src="js/shadow-simulator.js"></script>
+    <script src="js/ar-view.js"></script>
+    <script src="js/map-view.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
